@@ -11,10 +11,14 @@ def parse_opts():
                         help="fio read IOPS.")
     parser.add_argument("--read-lat", action="store_true", default=False,
                         help="fio read average latency. (ns)")
+    parser.add_argument("--read-bw", action="store_true", default=False,
+                        help="fio read bandwidth. (Bytes)")
     parser.add_argument("--write-iops", action="store_true", default=False,
                         help="fio write IOPS.")
     parser.add_argument("--write-lat", action="store_true", default=False,
                         help="fio write average latency. (ns)")
+    parser.add_argument("--write-bw", action="store_true", default=False,
+                        help="fio write bandwidth. (Bytes)")
     parser.add_argument("--target", action="store", default=None,
                                     help="file path of fio JSON output.")
     parser.add_argument("--summary", action="store_true", default=False,
@@ -30,7 +34,7 @@ if __name__ == '__main__':
         sys.exit(1)
     else:
         output_file = args.target
- 
+
     with open(output_file) as fp:
         result = json.load(fp)
 
@@ -45,6 +49,7 @@ if __name__ == '__main__':
     write_clag_ns = result_write['clat_ns']['percentile']
 
     read_iops = int(result_read['iops'])
+    read_bw = int(result_read['bw']*1024)    #Bytes
     read_lag_ns_min = int(read_lag_ns['min'])
     read_lag_ns_avg = int(read_lag_ns['mean'])
     read_lag_ns_max = int(read_lag_ns['max'])
@@ -52,6 +57,7 @@ if __name__ == '__main__':
     read_clag_ns_99 = int(read_clag_ns['99.000000'])
 
     write_iops = int(result_write['iops'])
+    write_bw = int(result_write['bw']*1024)    #Bytes
     write_lag_ns_min = int(write_lag_ns['min'])
     write_lag_ns_avg = int(write_lag_ns['mean'])
     write_lag_ns_max = int(write_lag_ns['max'])
@@ -70,12 +76,20 @@ if __name__ == '__main__':
         print(read_lag_ns_avg)
         sys.exit()
 
+    if args.read_bw:
+        print(read_bw)
+        sys.exit()
+
     if args.write_iops:
         print(write_iops)
         sys.exit()
 
     if args.write_lat:
         print(write_lag_ns_avg)
+        sys.exit()
+
+    if args.write_bw:
+        print(write_bw)
         sys.exit()
 
     if args.summary:
