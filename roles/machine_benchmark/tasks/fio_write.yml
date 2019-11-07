@@ -11,17 +11,21 @@
 
 - name: get fio write bandwidth
   shell: "python parse_fio_output.py --target='fio_write_result.json' --write-bw"
-  register: disk_write_iops
+  register: disk_write_bw
   args:
     chdir: "{{ fio_deploy_dir }}/"
 
 - name: get fio read bandwidth
   shell: "python parse_fio_output.py --target='fio_write_result.json' --read-bw"
-  register: disk_read_iops
+  register: disk_read_bw
   args:
     chdir: "{{ fio_deploy_dir }}/"
 
-- name: fio randread benchmark command
+- name: fio write benchmark command
   debug:
-    msg: "fio randread benchmark command: {{ fio_randread.cmd }}."
+    msg: "fio write benchmark command: {{ fio_write.cmd }}."
   run_once: true
+
+- name: fio write benchmark bandwidth
+  debug:
+    msg: "fio randread benchmark summary: write bw == {{ disk_write_bw.stdout }} , read bw == {{ disk_read_bw.stdout }} ."
