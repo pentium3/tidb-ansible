@@ -9,6 +9,11 @@
     path: "{{ fio_deploy_dir }}/fio_write_test.txt"
     state: absent
 
+- name: save fio write bandwidth result
+  shell: "python parse_fio_output.py --target='fio_write_result.json' --write-bw >> writebw.txt"
+  args:
+    chdir: "{{ fio_deploy_dir }}/"
+
 - name: get fio write bandwidth
   shell: "python parse_fio_output.py --target='fio_write_result.json' --write-bw"
   register: disk_write_bw
