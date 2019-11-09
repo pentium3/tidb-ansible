@@ -10,19 +10,13 @@
     state: absent
 
 - name: save fio write bandwidth result
-  shell: "python parse_fio_output.py --target='fio_write_result.json' --write-bw >> writebw.txt"
+  shell: "python parse_fio_output.py --target='fio_write_result.json' --write-bw >> ../writebw.txt"
   args:
     chdir: "{{ fio_deploy_dir }}/"
 
 - name: get fio write bandwidth
   shell: "python parse_fio_output.py --target='fio_write_result.json' --write-bw"
   register: disk_write_bw
-  args:
-    chdir: "{{ fio_deploy_dir }}/"
-
-- name: get fio read bandwidth
-  shell: "python parse_fio_output.py --target='fio_write_result.json' --read-bw"
-  register: disk_read_bw
   args:
     chdir: "{{ fio_deploy_dir }}/"
 
@@ -33,4 +27,4 @@
 
 - name: fio write benchmark bandwidth
   debug:
-    msg: "fio randread benchmark summary: write bw == {{ disk_write_bw.stdout }} , read bw == {{ disk_read_bw.stdout }} ."
+    msg: "fio randread benchmark summary: write bw == {{ disk_write_bw.stdout }}."

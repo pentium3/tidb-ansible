@@ -31,3 +31,5 @@
 - include_tasks: fio_randread_write_latency.yml
 
 - include_tasks: fio_write.yml
+
+- include_tasks: fio_read.yml

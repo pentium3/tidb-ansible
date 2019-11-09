@@ -1,0 +1,30 @@
+---
+
+- name: fio read benchmark on tikv_data_dir disk
+  shell: "cd {{ fio_deploy_dir }} && ./fio -filename=fio_read_test.txt -direct=0 -iodepth 1 -thread -rw=read -ioengine=psync -bs=16k -size={{ benchmark_size }} -numjobs=6 -runtime=60 -group_reporting -name='fio read test' -group_reporting --output-format=json --output=fio_read_result.json"
+  register: fio_read
+
+- name: clean fio read benchmark temporary file
+  file:
+    path: "{{ fio_deploy_dir }}/fio_read_test.txt"
+    state: absent
+
+- name: save fio read bandwidth result
+  shell: "python parse_fio_output.py --target='fio_read_result.json' --read-bw >> ../readbw.txt"
+  args:
+    chdir: "{{ fio_deploy_dir }}/"
+
+- name: get fio read bandwidth
+  shell: "python parse_fio_output.py --target='fio_read_result.json' --read-bw"
+  register: disk_read_bw
+  args:
+    chdir: "{{ fio_deploy_dir }}/"
+
+- name: fio read benchmark command
+  debug:
+    msg: "fio read benchmark command: {{ fio_read.cmd }}."
+  run_once: true
+
+- name: fio read benchmark bandwidth
+  debug:
+    msg: "fio randread benchmark summary: read bw == {{ disk_read_bw.stdout }}."
